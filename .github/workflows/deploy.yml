@@ -61,6 +61,15 @@ jobs:
     needs: determine-deployment
     if: needs.determine-deployment.outputs.deploy_all == 'true' || needs.determine-deployment.outputs.deploy_facilitate == 'true'
     steps:
+
+      - name: Debug Outputs
+        run: |
+          echo "DEPLOY_FACILITATE=${DEPLOY_FACILITATE}"
+          echo "DEPLOY_GPT=${DEPLOY_GPT}"
+          echo "DEPLOY_HTML=${DEPLOY_HTML}"
+          echo "DEPLOY_URL=${DEPLOY_URL}"
+          echo "DEPLOY_ALL=${DEPLOY_ALL}"
+          
       - name: Checkout code
         uses: actions/checkout@v3
 
