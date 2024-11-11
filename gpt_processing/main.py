@@ -1,8 +1,6 @@
 from fastapi import FastAPI
-
 import logging
 import json
-
 from core.configs import settings
 from core.configs import schemas
 from core.services import data_service as ds
