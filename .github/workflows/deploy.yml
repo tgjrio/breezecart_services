@@ -62,11 +62,11 @@ jobs:
           echo "DEPLOY_URL=${DEPLOY_URL}"
 
           # Set outputs for other jobs
-          echo "deploy_facilitate=${DEPLOY_FACILITATE}" >> $GITHUB_ENV
-          echo "deploy_gpt=${DEPLOY_GPT}" >> $GITHUB_ENV
-          echo "deploy_html=${DEPLOY_HTML}" >> $GITHUB_ENV
-          echo "deploy_url=${DEPLOY_URL}" >> $GITHUB_ENV
-          echo "deploy_all=${DEPLOY_ALL}" >> $GITHUB_ENV
+          echo "deploy_facilitate=${DEPLOY_FACILITATE}" >> $GITHUB_OUTPUT
+          echo "deploy_gpt=${DEPLOY_GPT}" >> $GITHUB_OUTPUT
+          echo "deploy_html=${DEPLOY_HTML}" >> $GITHUB_OUTPUT
+          echo "deploy_url=${DEPLOY_URL}" >> $GITHUB_OUTPUT
+          echo "deploy_all=${DEPLOY_ALL}" >> $GITHUB_OUTPUT
 
       - name: Display Outputs
         run: |
@@ -79,38 +79,29 @@ jobs:
   deploy-facilitate:
     runs-on: ubuntu-latest
     needs: determine-deployment
+    if: needs.determine-deployment.outputs.deploy_all == 'true' || needs.determine-deployment.outputs.deploy_facilitate == 'true'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set environment variables for condition checking
-        run: |
-          echo "DEPLOY_ALL=${{ env.deploy_all }}"
-          echo "DEPLOY_FACILITATE=${{ env.deploy_facilitate }}"
-
       - name: Authenticate to Google Cloud
-        if: env.DEPLOY_ALL == 'true' || env.DEPLOY_FACILITATE == 'true'
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Configure Docker
-        if: env.DEPLOY_ALL == 'true' || env.DEPLOY_FACILITATE == 'true'
         run: gcloud auth configure-docker
 
       - name: Build Docker Image for Facilitate Requests Service
-        if: env.DEPLOY_ALL == 'true' || env.DEPLOY_FACILITATE == 'true'
         run: |
           docker build -t gcr.io/${{ secrets.PROJECT_ID }}/facilitate-requests-image \
             --build-arg SERVICE_NAME=facilitate_requests .
 
       - name: Push Docker Image for Facilitate Requests Service
-        if: env.DEPLOY_ALL == 'true' || env.DEPLOY_FACILITATE == 'true'
         run: |
           docker push gcr.io/${{ secrets.PROJECT_ID }}/facilitate-requests-image
 
       - name: Deploy Facilitate Requests Service
-        if: env.DEPLOY_ALL == 'true' || env.DEPLOY_FACILITATE == 'true'
         run: |
           gcloud run deploy facilitate-requests-service \
             --image gcr.io/${{ secrets.PROJECT_ID }}/facilitate-requests-image \
@@ -118,7 +109,6 @@ jobs:
             --platform managed \
             --allow-unauthenticated \
             --set-env-vars "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}, REDIS_HOST=${{ secrets.REDIS_HOST }}, REDIS_PORT=${{ secrets.REDIS_PORT }}, REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}, PROCESS_HTML_REQUESTS=${{ secrets.PROCESS_HTML_REQUESTS }}, CHAT_GPT_REQUEST=${{ secrets.CHAT_GPT_REQUEST }}, FACILITATE_REQUEST=${{ secrets.FACILITATE_REQUEST }}"
-            
   deploy-gpt:
     runs-on: ubuntu-latest
     needs: determine-deployment
