@@ -19,15 +19,16 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
       - name: Determine Services to Deploy
         id: set-deployment-flags
         run: |
-          # Your existing logic to set flags
-          echo "deploy_facilitate=${DEPLOY_FACILITATE}" >> $GITHUB_ENV
-          echo "deploy_gpt=${DEPLOY_GPT}" >> $GITHUB_ENV
-          echo "deploy_html=${DEPLOY_HTML}" >> $GITHUB_ENV
-          echo "deploy_url=${DEPLOY_URL}" >> $GITHUB_ENV
-          echo "deploy_all=${DEPLOY_ALL}" >> $GITHUB_ENV
+          # Initialize deployment flags
+          DEPLOY_FACILITATE=false
+          DEPLOY_GPT=false
+          DEPLOY_HTML=false
+          DEPLOY_URL=false
+          DEPLOY_ALL=false
 
           # Check for changes in core/ directory
           if git diff --name-only HEAD~1 HEAD | grep -q "^core/"; then
