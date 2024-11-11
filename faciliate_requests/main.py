@@ -7,8 +7,6 @@ from core.services import data_service as ds
 # Initialize RedisManager and PubSubManager
 redis_manager = ds.RedisManager()
 
-#Testing Deployment
-# Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Initialize FastAPI application
