@@ -22,12 +22,12 @@ jobs:
       - name: Determine Services to Deploy
         id: set-deployment-flags
         run: |
-          # Your existing logic for setting flags
-          echo "::set-output name=deploy_facilitate::${DEPLOY_FACILITATE}"
-          echo "::set-output name=deploy_gpt::${DEPLOY_GPT}"
-          echo "::set-output name=deploy_html::${DEPLOY_HTML}"
-          echo "::set-output name=deploy_url::${DEPLOY_URL}"
-          echo "::set-output name=deploy_all::${DEPLOY_ALL}"
+          # Your existing logic to set flags
+          echo "deploy_facilitate=${DEPLOY_FACILITATE}" >> $GITHUB_ENV
+          echo "deploy_gpt=${DEPLOY_GPT}" >> $GITHUB_ENV
+          echo "deploy_html=${DEPLOY_HTML}" >> $GITHUB_ENV
+          echo "deploy_url=${DEPLOY_URL}" >> $GITHUB_ENV
+          echo "deploy_all=${DEPLOY_ALL}" >> $GITHUB_ENV
 
           # Check for changes in core/ directory
           if git diff --name-only HEAD~1 HEAD | grep -q "^core/"; then
