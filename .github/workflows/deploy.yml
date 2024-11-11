@@ -1,0 +1,193 @@
+name: Deploy Subservices - Breezecart
+
+on:
+  push:
+    branches: 
+      - main
+
+jobs:
+  determine-deployment:
+    runs-on: ubuntu-latest
+    outputs:
+      deploy_facilitate: ${{ steps.set-deployment-flags.outputs.deploy_facilitate }}
+      deploy_gpt: ${{ steps.set-deployment-flags.outputs.deploy_gpt }}
+      deploy_html: ${{ steps.set-deployment-flags.outputs.deploy_html }}
+      deploy_url: ${{ steps.set-deployment-flags.outputs.deploy_url }}
+      deploy_all: ${{ steps.set-deployment-flags.outputs.deploy_all }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Determine Services to Deploy
+        id: set-deployment-flags
+        run: |
+          # Initialize deployment flags
+          DEPLOY_FACILITATE=false
+          DEPLOY_GPT=false
+          DEPLOY_HTML=false
+          DEPLOY_URL=false
+          DEPLOY_ALL=false
+
+          # Check for changes in core/ directory
+          if git diff --name-only HEAD~1 HEAD | grep -q "^core/"; then
+            DEPLOY_ALL=true
+          fi
+
+          # Check for changes in main.py files for individual services, but only if DEPLOY_ALL is false
+          if [ "$DEPLOY_ALL" = false ] && git diff --name-only HEAD~1 HEAD | grep -q "facilitate_requests/main.py"; then
+            DEPLOY_FACILITATE=true
+          fi
+          if [ "$DEPLOY_ALL" = false ] && git diff --name-only HEAD~1 HEAD | grep -q "gpt_processing/main.py"; then
+            DEPLOY_GPT=true
+          fi
+          if [ "$DEPLOY_ALL" = false ] && git diff --name-only HEAD~1 HEAD | grep -q "html_processing/main.py"; then
+            DEPLOY_HTML=true
+          fi
+          if [ "$DEPLOY_ALL" = false ] && git diff --name-only HEAD~1 HEAD | grep -q "url_validation/main.py"; then
+            DEPLOY_URL=true
+          fi
+
+          # Set outputs for other jobs
+          echo "::set-output name=deploy_facilitate::${DEPLOY_FACILITATE}"
+          echo "::set-output name=deploy_gpt::${DEPLOY_GPT}"
+          echo "::set-output name=deploy_html::${DEPLOY_HTML}"
+          echo "::set-output name=deploy_url::${DEPLOY_URL}"
+          echo "::set-output name=deploy_all::${DEPLOY_ALL}"
+
+  deploy-facilitate:
+    runs-on: ubuntu-latest
+    needs: determine-deployment
+    if: needs.determine-deployment.outputs.deploy_all == 'true' || needs.determine-deployment.outputs.deploy_facilitate == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker
+
+      - name: Build Docker Image for Facilitate Requests Service
+        run: |
+          docker build -t gcr.io/${{ secrets.PROJECT_ID }}/facilitate-requests-image \
+            --build-arg SERVICE_NAME=facilitate_requests .
+
+      - name: Push Docker Image for Facilitate Requests Service
+        run: |
+          docker push gcr.io/${{ secrets.PROJECT_ID }}/facilitate-requests-image
+
+      - name: Deploy Facilitate Requests Service
+        run: |
+          gcloud run deploy facilitate-requests-service \
+            --image gcr.io/${{ secrets.PROJECT_ID }}/facilitate-requests-image \
+            --region ${{ secrets.REGION }} \
+            --platform managed \
+            --allow-unauthenticated
+            --set-env-vars "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}, REDIS_HOST=${{ secrets.REDIS_HOST }}, REDIS_PORT=${{ secrets.REDIS_PORT }}, REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} PROCESS_HTML_REQUESTS=${{ secrets.PROCESS_HTML_REQUESTS }}, CHAT_GPT_REQUEST=${{ secrets.CHAT_GPT_REQUEST }}, FACILITATE_REQUEST=${{ secrets.FACILITATE_REQUEST }}"
+
+  deploy-gpt:
+    runs-on: ubuntu-latest
+    needs: determine-deployment
+    if: needs.determine-deployment.outputs.deploy_all == 'true' || needs.determine-deployment.outputs.deploy_gpt == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker
+
+      - name: Build Docker Image for GPT Processing Service
+        run: |
+          docker build -t gcr.io/${{ secrets.PROJECT_ID }}/gpt-processing-image \
+            --build-arg SERVICE_NAME=gpt_processing .
+
+      - name: Push Docker Image for GPT Processing Service
+        run: |
+          docker push gcr.io/${{ secrets.PROJECT_ID }}/gpt-processing-image
+
+      - name: Deploy GPT Processing Service
+        run: |
+          gcloud run deploy gpt-processing-service \
+            --image gcr.io/${{ secrets.PROJECT_ID }}/gpt-processing-image \
+            --region ${{ secrets.REGION }} \
+            --platform managed \
+            --allow-unauthenticated
+            --set-env-vars "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}, REDIS_HOST=${{ secrets.REDIS_HOST }}, REDIS_PORT=${{ secrets.REDIS_PORT }}, REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} PROCESS_HTML_REQUESTS=${{ secrets.PROCESS_HTML_REQUESTS }}, CHAT_GPT_REQUEST=${{ secrets.CHAT_GPT_REQUEST }}, FACILITATE_REQUEST=${{ secrets.FACILITATE_REQUEST }}"
+
+  deploy-html:
+    runs-on: ubuntu-latest
+    needs: determine-deployment
+    if: needs.determine-deployment.outputs.deploy_all == 'true' || needs.determine-deployment.outputs.deploy_html == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker
+
+      - name: Build Docker Image for HTML Processing Service
+        run: |
+          docker build -t gcr.io/${{ secrets.PROJECT_ID }}/html-processing-image \
+            --build-arg SERVICE_NAME=html_processing .
+
+      - name: Push Docker Image for HTML Processing Service
+        run: |
+          docker push gcr.io/${{ secrets.PROJECT_ID }}/html-processing-image
+
+      - name: Deploy HTML Processing Service
+        run: |
+          gcloud run deploy html-processing-service \
+            --image gcr.io/${{ secrets.PROJECT_ID }}/html-processing-image \
+            --region ${{ secrets.REGION }} \
+            --platform managed \
+            --allow-unauthenticated
+            --set-env-vars "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}, REDIS_HOST=${{ secrets.REDIS_HOST }}, REDIS_PORT=${{ secrets.REDIS_PORT }}, REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} PROCESS_HTML_REQUESTS=${{ secrets.PROCESS_HTML_REQUESTS }}, CHAT_GPT_REQUEST=${{ secrets.CHAT_GPT_REQUEST }}, FACILITATE_REQUEST=${{ secrets.FACILITATE_REQUEST }}"
+
+  deploy-url:
+    runs-on: ubuntu-latest
+    needs: determine-deployment
+    if: needs.determine-deployment.outputs.deploy_all == 'true' || needs.determine-deployment.outputs.deploy_url == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker
+
+      - name: Build Docker Image for URL Validation Service
+        run: |
+          docker build -t gcr.io/${{ secrets.PROJECT_ID }}/url-validation-image \
+            --build-arg SERVICE_NAME=url_validation .
+
+      - name: Push Docker Image for URL Validation Service
+        run: |
+          docker push gcr.io/${{ secrets.PROJECT_ID }}/url-validation-image
+
+      - name: Deploy URL Validation Service
+        run: |
+          gcloud run deploy url-validation-service \
+            --image gcr.io/${{ secrets.PROJECT_ID }}/url-validation-image \
+            --region ${{ secrets.REGION }} \
+            --platform managed \
+            --allow-unauthenticated
+            --set-env-vars "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}, REDIS_HOST=${{ secrets.REDIS_HOST }}, REDIS_PORT=${{ secrets.REDIS_PORT }}, REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} PROCESS_HTML_REQUESTS=${{ secrets.PROCESS_HTML_REQUESTS }}, CHAT_GPT_REQUEST=${{ secrets.CHAT_GPT_REQUEST }}, FACILITATE_REQUEST=${{ secrets.FACILITATE_REQUEST }}"
