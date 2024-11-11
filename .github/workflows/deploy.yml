@@ -85,8 +85,8 @@ jobs:
 
       - name: Set environment variables for condition checking
         run: |
-          echo "DEPLOY_ALL=${{ needs.determine-deployment.outputs.deploy_all }}" >> $GITHUB_ENV
-          echo "DEPLOY_FACILITATE=${{ needs.determine-deployment.outputs.deploy_facilitate }}" >> $GITHUB_ENV
+          echo "DEPLOY_ALL=${{ env.deploy_all }}" 
+          echo "DEPLOY_FACILITATE=${{ env.deploy_facilitate }}"
 
       - name: Authenticate to Google Cloud
         if: env.DEPLOY_ALL == 'true' || env.DEPLOY_FACILITATE == 'true'
@@ -118,7 +118,7 @@ jobs:
             --platform managed \
             --allow-unauthenticated \
             --set-env-vars "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}, REDIS_HOST=${{ secrets.REDIS_HOST }}, REDIS_PORT=${{ secrets.REDIS_PORT }}, REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}, PROCESS_HTML_REQUESTS=${{ secrets.PROCESS_HTML_REQUESTS }}, CHAT_GPT_REQUEST=${{ secrets.CHAT_GPT_REQUEST }}, FACILITATE_REQUEST=${{ secrets.FACILITATE_REQUEST }}"
-            
+
   deploy-gpt:
     runs-on: ubuntu-latest
     needs: determine-deployment
