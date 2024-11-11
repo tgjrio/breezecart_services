@@ -36,23 +36,27 @@ jobs:
           fi
           echo "DEPLOY_ALL=${DEPLOY_ALL}"
 
+          # Debugging step to see changed files
+          echo "Changed files:"
+          git diff --name-only HEAD~1 HEAD
+
           # Check for changes in main.py files for individual services, but only if DEPLOY_ALL is false
-          if [ "$DEPLOY_ALL" = false ] && git diff --name-only HEAD~1 HEAD | grep -q "facilitate_requests/main.py"; then
+          if [ "$DEPLOY_ALL" = "false" ] && git diff --name-only HEAD~1 HEAD | grep -q "facilitate_requests/main.py"; then
             DEPLOY_FACILITATE=true
           fi
           echo "DEPLOY_FACILITATE=${DEPLOY_FACILITATE}"
 
-          if [ "$DEPLOY_ALL" = false ] && git diff --name-only HEAD~1 HEAD | grep -q "gpt_processing/main.py"; then
+          if [ "$DEPLOY_ALL" = "false" ] && git diff --name-only HEAD~1 HEAD | grep -q "gpt_processing/main.py"; then
             DEPLOY_GPT=true
           fi
           echo "DEPLOY_GPT=${DEPLOY_GPT}"
 
-          if [ "$DEPLOY_ALL" = false ] && git diff --name-only HEAD~1 HEAD | grep -q "html_processing/main.py"; then
+          if [ "$DEPLOY_ALL" = "false" ] && git diff --name-only HEAD~1 HEAD | grep -q "html_processing/main.py"; then
             DEPLOY_HTML=true
           fi
           echo "DEPLOY_HTML=${DEPLOY_HTML}"
 
-          if [ "$DEPLOY_ALL" = false ] && git diff --name-only HEAD~1 HEAD | grep -q "url_validation/main.py"; then
+          if [ "$DEPLOY_ALL" = "false" ] && git diff --name-only HEAD~1 HEAD | grep -q "url_validation/main.py"; then
             DEPLOY_URL=true
           fi
           echo "DEPLOY_URL=${DEPLOY_URL}"
