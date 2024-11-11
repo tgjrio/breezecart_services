@@ -34,27 +34,35 @@ jobs:
           if git diff --name-only HEAD~1 HEAD | grep -q "^core/"; then
             DEPLOY_ALL=true
           fi
+          echo "DEPLOY_ALL=${DEPLOY_ALL}"
 
           # Check for changes in main.py files for individual services, but only if DEPLOY_ALL is false
           if [ "$DEPLOY_ALL" = false ] && git diff --name-only HEAD~1 HEAD | grep -q "facilitate_requests/main.py"; then
             DEPLOY_FACILITATE=true
           fi
+          echo "DEPLOY_FACILITATE=${DEPLOY_FACILITATE}"
+
           if [ "$DEPLOY_ALL" = false ] && git diff --name-only HEAD~1 HEAD | grep -q "gpt_processing/main.py"; then
             DEPLOY_GPT=true
           fi
+          echo "DEPLOY_GPT=${DEPLOY_GPT}"
+
           if [ "$DEPLOY_ALL" = false ] && git diff --name-only HEAD~1 HEAD | grep -q "html_processing/main.py"; then
             DEPLOY_HTML=true
           fi
+          echo "DEPLOY_HTML=${DEPLOY_HTML}"
+
           if [ "$DEPLOY_ALL" = false ] && git diff --name-only HEAD~1 HEAD | grep -q "url_validation/main.py"; then
             DEPLOY_URL=true
           fi
+          echo "DEPLOY_URL=${DEPLOY_URL}"
 
           # Set outputs for other jobs
-          echo "::set-output name=deploy_facilitate::${DEPLOY_FACILITATE}"
-          echo "::set-output name=deploy_gpt::${DEPLOY_GPT}"
-          echo "::set-output name=deploy_html::${DEPLOY_HTML}"
-          echo "::set-output name=deploy_url::${DEPLOY_URL}"
-          echo "::set-output name=deploy_all::${DEPLOY_ALL}"
+          echo "deploy_facilitate=${DEPLOY_FACILITATE}" >> $GITHUB_ENV
+          echo "deploy_gpt=${DEPLOY_GPT}" >> $GITHUB_ENV
+          echo "deploy_html=${DEPLOY_HTML}" >> $GITHUB_ENV
+          echo "deploy_url=${DEPLOY_URL}" >> $GITHUB_ENV
+          echo "deploy_all=${DEPLOY_ALL}" >> $GITHUB_ENV
 
   deploy-facilitate:
     runs-on: ubuntu-latest
@@ -62,14 +70,6 @@ jobs:
     if: needs.determine-deployment.outputs.deploy_all == 'true' || needs.determine-deployment.outputs.deploy_facilitate == 'true'
     steps:
 
-      - name: Debug Outputs
-        run: |
-          echo "DEPLOY_FACILITATE=${DEPLOY_FACILITATE}"
-          echo "DEPLOY_GPT=${DEPLOY_GPT}"
-          echo "DEPLOY_HTML=${DEPLOY_HTML}"
-          echo "DEPLOY_URL=${DEPLOY_URL}"
-          echo "DEPLOY_ALL=${DEPLOY_ALL}"
-          
       - name: Checkout code
         uses: actions/checkout@v3
 
