@@ -8,7 +8,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 # Copy only requirements first to leverage Docker caching
-COPY breezecart/requirements.txt ./requirements.txt
+COPY requirements.txt ./requirements.txt
 
 # Install the dependencies
 RUN pip install --no-cache-dir -r requirements.txt
