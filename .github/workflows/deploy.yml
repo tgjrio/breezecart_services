@@ -85,8 +85,8 @@ jobs:
 
       - name: Set environment variables for condition checking
         run: |
-          echo "DEPLOY_ALL=${{ env.deploy_all }}" 
-          echo "DEPLOY_FACILITATE=${{ env.deploy_facilitate }}"
+          echo "DEPLOY_ALL=${{ env.deploy_all }}" >> $GITHUB_ENV
+          echo "DEPLOY_FACILITATE=${{ env.deploy_facilitate }}" >> $GITHUB_ENV
 
       - name: Authenticate to Google Cloud
         if: env.DEPLOY_ALL == 'true' || env.DEPLOY_FACILITATE == 'true'
