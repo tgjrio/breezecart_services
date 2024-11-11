@@ -68,6 +68,23 @@ jobs:
           echo "deploy_url=${DEPLOY_URL}" >> $GITHUB_ENV
           echo "deploy_all=${DEPLOY_ALL}" >> $GITHUB_ENV
 
+      - name: Display Outputs
+        run: |
+            echo "deploy_facilitate=${{ env.deploy_facilitate }}"
+            echo "deploy_gpt=${{ env.deploy_gpt }}"
+            echo "deploy_html=${{ env.deploy_html }}"
+            echo "deploy_url=${{ env.deploy_url }}"
+            echo "deploy_all=${{ env.deploy_all }}"
+
+  debug-deployment:
+    runs-on: ubuntu-latest
+    needs: determine-deployment
+    steps:
+      - name: Display Output Values
+        run: |
+          echo "deploy_facilitate=${{ needs.determine-deployment.outputs.deploy_facilitate }}"
+          echo "deploy_all=${{ needs.determine-deployment.outputs.deploy_all }}"
+
   deploy-facilitate:
     runs-on: ubuntu-latest
     needs: determine-deployment
