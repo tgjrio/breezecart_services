@@ -45,3 +45,7 @@ async def process_html(submission: schemas.SubmissionRequest, background_tasks: 
 
     # Return a success message to the client, indicating that HTML processing has started in the background
     return {"message": "HTML processing has been started in the background."}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8080)

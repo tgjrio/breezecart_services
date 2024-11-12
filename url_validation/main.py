@@ -60,4 +60,4 @@ async def start_processing(submission: schemas.SubmissionRequest):
 # This block is executed when running the script directly, starting the FastAPI app using Uvicorn
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(app, host="0.0.0.0", port=8080)
