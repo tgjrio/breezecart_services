@@ -27,4 +27,4 @@ ARG SERVICE_NAME
 ENV SERVICE_NAME=${SERVICE_NAME}
 
 # Run the FastAPI application using Uvicorn
-CMD ["uvicorn ${SERVICE_NAME}.main:app --host 0.0.0.0 --port $PORT"]
+CMD ["sh", "-c", "uvicorn ${SERVICE_NAME}.main:app --host 0.0.0.0 --port $PORT"]

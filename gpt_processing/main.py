@@ -12,7 +12,6 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 redis_manager = ds.RedisManager()
 pubsub_manager = ds.PubSubManager()
 
-
 # Initialize FastAPI application
 app = FastAPI()
 
