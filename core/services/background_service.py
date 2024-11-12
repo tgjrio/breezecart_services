@@ -22,12 +22,12 @@ async def background_process_html(submission: schemas.SubmissionRequest):
     logging.info(f"Starting HTML processing for session: {submission.session_id}")
 
     # Retrieve previously stored submission data from Redis using session ID
-    # stored_submission = await redis_manager.get_from_redis(submission.session_id, "submission", prefix="temp")
+    stored_submission = await redis_manager.get_from_redis(submission.session_id, "submission", prefix="temp")
     
-    # # If no data is found in Redis, raise an HTTP 404 error
-    # if not stored_submission:
-    #     logging.error(f"Session {submission.session_id} not found in Redis.")
-    #     raise HTTPException(status_code=404, detail="Session not found or data missing")
+    # If no data is found in Redis, raise an HTTP 404 error
+    if not stored_submission:
+        logging.error(f"Session {submission.session_id} not found in Redis.")
+        raise HTTPException(status_code=404, detail="Session not found or data missing")
 
     submitted_url = str(submission.url)  # Store the submitted URL
 
