@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Set your project ID (ideally as an environment variable)
-PROJECT_ID = os.getenv("PROJECT_ID")
+PROJECT_ID = 'personal-portfolio-hty0zj'
 if not PROJECT_ID:
     raise ValueError("The PROJECT_ID environment variable is not set.")
 
