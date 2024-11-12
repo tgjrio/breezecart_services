@@ -1,11 +1,16 @@
 from openai import OpenAI
 from google.cloud import secretmanager
 import os
+from dotenv import load_dotenv
+
+# Load .env file variables into the environment
+load_dotenv()
 
 # Set your project ID (ideally as an environment variable)
 PROJECT_ID = os.getenv("PROJECT_ID")
 if not PROJECT_ID:
     raise ValueError("The PROJECT_ID environment variable is not set.")
+
 
 def access_secret_version(project_id, secret_id, version_id="latest"):
     """

@@ -5,9 +5,6 @@ on:
     branches: 
       - main
 
-env:
-  PROJECT_ID: ${{ secrets.PROJECT_ID }}
-
 jobs:
   determine-deployment:
     runs-on: ubuntu-latest
@@ -87,6 +84,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Load .env variables
+        run: |
+          set -o allexport
+          source .env
+          set +o allexport
+      
+      - name: Print loaded environment variables (for debugging)
+        run: echo "PROJECT_ID is $PROJECT_ID"
+
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
@@ -97,21 +103,21 @@ jobs:
 
       - name: Build Docker Image for Facilitate Requests Service
         run: |
-          docker build -t gcr.io/${{ env.PROJECT_ID }}/facilitate-requests-image \
+          docker build -t gcr.io/${{ secrets.PROJECT_ID }}/facilitate-requests-image \
             --build-arg SERVICE_NAME=facilitate_requests .
 
       - name: Push Docker Image for Facilitate Requests Service
         run: |
-          docker push gcr.io/${{ env.PROJECT_ID }}/facilitate-requests-image
+          docker push gcr.io/${{ secrets.PROJECT_ID }}/facilitate-requests-image
 
       - name: Deploy Facilitate Requests Service
         run: |
           gcloud run deploy facilitate-requests-service \
-            --image gcr.io/${{ env.PROJECT_ID }}/facilitate-requests-image \
+            --image gcr.io/${{ secrets.PROJECT_ID }}/facilitate-requests-image \
             --region ${{ secrets.REGION }} \
             --platform managed \
             --allow-unauthenticated \
-            --set-env-vars "PROJECT_ID=${{ env.PROJECT_ID }}"
+            --set-env-vars "PROJECT_ID=${{ secrets.PROJECT_ID }}"
 
   deploy-gpt:
     runs-on: ubuntu-latest
@@ -120,6 +126,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Load .env variables
+        run: |
+          set -o allexport
+          source .env
+          set +o allexport
+      
+      - name: Print loaded environment variables (for debugging)
+        run: echo "PROJECT_ID is $PROJECT_ID"
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
@@ -131,21 +146,21 @@ jobs:
 
       - name: Build Docker Image for GPT Processing Service
         run: |
-          docker build -t gcr.io/${{ env.PROJECT_ID }}/gpt-processing-image \
+          docker build -t gcr.io/${{ secrets.PROJECT_ID }}/gpt-processing-image \
             --build-arg SERVICE_NAME=gpt_processing .
 
       - name: Push Docker Image for GPT Processing Service
         run: |
-          docker push gcr.io/${{ env.PROJECT_ID }}/gpt-processing-image
+          docker push gcr.io/${{ secrets.PROJECT_ID }}/gpt-processing-image
 
       - name: Deploy GPT Processing Service
         run: |
           gcloud run deploy gpt-processing-service \
-            --image gcr.io/${{ env.PROJECT_ID }}/gpt-processing-image \
+            --image gcr.io/${{ secrets.PROJECT_ID }}/gpt-processing-image \
             --region ${{ secrets.REGION }} \
             --platform managed \
             --allow-unauthenticated
-            --set-env-vars "PROJECT_ID=${{ env.PROJECT_ID }}"
+            --set-env-vars "PROJECT_ID=${{ secrets.PROJECT_ID }}"
 
   deploy-html:
     runs-on: ubuntu-latest
@@ -154,6 +169,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Load .env variables
+        run: |
+          set -o allexport
+          source .env
+          set +o allexport
+      
+      - name: Print loaded environment variables (for debugging)
+        run: echo "PROJECT_ID is $PROJECT_ID"
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
@@ -165,21 +189,21 @@ jobs:
 
       - name: Build Docker Image for HTML Processing Service
         run: |
-          docker build -t gcr.io/${{ env.PROJECT_ID }}/html-processing-image \
+          docker build -t gcr.io/${{ secrets.PROJECT_ID }}/html-processing-image \
             --build-arg SERVICE_NAME=html_processing .
 
       - name: Push Docker Image for HTML Processing Service
         run: |
-          docker push gcr.io/${{ env.PROJECT_ID }}/html-processing-image
+          docker push gcr.io/${{ secrets.PROJECT_ID }}/html-processing-image
 
       - name: Deploy HTML Processing Service
         run: |
           gcloud run deploy html-processing-service \
-            --image gcr.io/${{ env.PROJECT_ID }}/html-processing-image \
+            --image gcr.io/${{ secrets.PROJECT_ID }}/html-processing-image \
             --region ${{ secrets.REGION }} \
             --platform managed \
             --allow-unauthenticated
-            --set-env-vars "PROJECT_ID=${{ env.PROJECT_ID }}"
+            --set-env-vars "PROJECT_ID=${{ secrets.PROJECT_ID }}"
 
   deploy-url:
     runs-on: ubuntu-latest
@@ -188,6 +212,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Load .env variables
+        run: |
+          set -o allexport
+          source .env
+          set +o allexport
+      
+      - name: Print loaded environment variables (for debugging)
+        run: echo "PROJECT_ID is $PROJECT_ID"
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
@@ -199,18 +232,18 @@ jobs:
 
       - name: Build Docker Image for URL Validation Service
         run: |
-          docker build -t gcr.io/${{ env.PROJECT_ID }}/url-validation-image \
+          docker build -t gcr.io/${{ secrets.PROJECT_ID }}/url-validation-image \
             --build-arg SERVICE_NAME=url_validation .
 
       - name: Push Docker Image for URL Validation Service
         run: |
-          docker push gcr.io/${{ env.PROJECT_ID }}/url-validation-image
+          docker push gcr.io/${{ secrets.PROJECT_ID }}/url-validation-image
 
       - name: Deploy URL Validation Service
         run: |
           gcloud run deploy url-validation-service \
-            --image gcr.io/${{ env.PROJECT_ID }}/url-validation-image \
+            --image gcr.io/${{ secrets.PROJECT_ID }}/url-validation-image \
             --region ${{ secrets.REGION }} \
             --platform managed \
             --allow-unauthenticated
-            --set-env-vars "PROJECT_ID=${{ env.PROJECT_ID }}"
+            --set-env-vars "PROJECT_ID=${{ secrets.PROJECT_ID }}"
