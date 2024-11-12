@@ -2,6 +2,11 @@ from openai import OpenAI
 from google.cloud import secretmanager
 import os
 
+# Set your project ID (ideally as an environment variable)
+PROJECT_ID = os.getenv("PROJECT_ID")
+if not PROJECT_ID:
+    raise ValueError("The PROJECT_ID environment variable is not set.")
+
 def access_secret_version(project_id, secret_id, version_id="latest"):
     """
     Access the payload of the specified secret version.
@@ -25,11 +30,6 @@ def access_secret_version(project_id, secret_id, version_id="latest"):
 
     # Return the decoded payload
     return response.payload.data.decode("UTF-8")
-
-# Set your project ID (ideally as an environment variable)
-PROJECT_ID = os.getenv("PROJECT_ID")
-if not PROJECT_ID:
-    raise ValueError("The PROJECT_ID environment variable is not set.")
 
 # Retrieve secrets from Secret Manager
 try:
