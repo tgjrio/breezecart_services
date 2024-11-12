@@ -40,7 +40,7 @@ async def standardize_ingredients(recipe_name, recipe_ingredients):
 
 async def standardize_nutrition(recipe_name, recipe_nutrition):
     try:
-        response = settings.client.chat.completions.create(
+        response = settings.OPENAI_CLIENT.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {f"role": "system", "content": prompts.prompt_nutrition},
