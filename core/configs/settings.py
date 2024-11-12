@@ -6,6 +6,7 @@ import os
 # # Load .env file variables into the environment
 # load_dotenv()
 
+
 # Set your project ID (ideally as an environment variable)
 PROJECT_ID = 'personal-portfolio-hty0zj'
 if not PROJECT_ID:
