@@ -1,9 +1,9 @@
 from openai import OpenAI
 from google.cloud import secretmanager
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 def access_secret_version(project_id, secret_id, version_id="latest"):
     """
