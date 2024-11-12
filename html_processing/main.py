@@ -33,12 +33,12 @@ async def process_html(submission: schemas.SubmissionRequest, background_tasks: 
     # Save the session data to Redis with the key "submission" under the session ID
     await redis_manager.save_to_redis(session_id, "submission", session_data, prefix="temp")
 
-    # Retrieve the data back from Redis to ensure it was saved correctly
-    saved_data = await redis_manager.get_from_redis(session_id, "submission", prefix="temp")
+    # # Retrieve the data back from Redis to ensure it was saved correctly
+    # saved_data = await redis_manager.get_from_redis(session_id, "submission", prefix="temp")
     
-    # If the data was not successfully saved, return an error message
-    if saved_data is None:
-        return {"error": "Failed to save session data to Redis"}
+    # # If the data was not successfully saved, return an error message
+    # if saved_data is None:
+    #     return {"error": "Failed to save session data to Redis"}
 
     # Add the HTML processing task to the background queue
     background_tasks.add_task(bt.background_process_html, submission)
