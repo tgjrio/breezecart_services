@@ -1,5 +1,6 @@
 from core.services import data_service as ds
 from core.configs import schemas
+from core.configs import settings
 from fastapi import FastAPI, BackgroundTasks
 from core.services import background_service as bt
 import logging
@@ -26,6 +27,7 @@ async def process_html(submission: schemas.SubmissionRequest, background_tasks: 
             "user_id": user_id,
         }
         logging.info("Attempting to save session data to Redis...")
+        logging.info(f"Redis Credentions: {settings.REDIS_HOST}:{settings.REDIS_PORT}:{settings.REDIS_PASSWORD}")
         await redis_manager.save_to_redis(session_id, "submission", session_data, prefix="temp")
         logging.info("Session data saved successfully.")
 
