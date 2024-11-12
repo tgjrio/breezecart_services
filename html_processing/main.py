@@ -6,6 +6,7 @@ from core.services import background_service as bt
 # Initialize RedisManager to handle storing and retrieving data from Redis
 redis_manager = ds.RedisManager()
 
+
 # Initialize FastAPI application
 app = FastAPI()
 

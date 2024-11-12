@@ -4,7 +4,7 @@ import json
 import logging
 import html
 import ssl
-from core.services.data_service import RedisManager, PubSubManager
+from core.services.data_service import RedisManager
 
 
 # Configure logging settings to track important events and errors during execution
@@ -18,7 +18,7 @@ class RecipeScraper:
     and published via Pub/Sub. Server-Sent Events (SSE) is used for real-time feedback to the client.
     """
     
-    def __init__(self, url, session_id, user_id, redis_manager: RedisManager, pubsub_manager: PubSubManager):
+    def __init__(self, url, session_id, user_id, redis_manager: RedisManager):
         """
         Initialize the RecipeScraper object with required attributes.
         
@@ -32,7 +32,6 @@ class RecipeScraper:
         self.session_id = session_id
         self.user_id = user_id
         self.redis_manager = redis_manager
-        self.pubsub_manager = pubsub_manager
         
         # User-Agent header to simulate a request from a regular browser
         self.headers = {

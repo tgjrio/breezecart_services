@@ -9,7 +9,6 @@ import logging
 
 # Initialize data managers
 redis_manager = ds.RedisManager()
-pubsub_manager = ds.PubSubManager()
 
 # Background task for processing HTML
 async def background_process_html(submission: schemas.SubmissionRequest):
@@ -36,7 +35,7 @@ async def background_process_html(submission: schemas.SubmissionRequest):
         logging.info(f"Scraping URL for recipe data: {submission.session_id}")
 
         # Initialize the RecipeScraper to handle the recipe scraping process
-        scraper = rp.RecipeScraper(submitted_url, submission.session_id, submission.user_id, redis_manager, pubsub_manager)
+        scraper = rp.RecipeScraper(submitted_url, submission.session_id, submission.user_id, redis_manager)
 
         # Fetch the HTML content from the submitted URL
         await scraper.fetch_page_content()
@@ -82,9 +81,6 @@ async def background_process_html(submission: schemas.SubmissionRequest):
 
     # Save the processed HTML data to Redis under the "processed_html" key for the current session
     await redis_manager.save_to_redis(submission.session_id, "processed_html", raw_data, prefix="temp")
-
-    # Send to Pub/Sub topic raw_data
-    await pubsub_manager.publish_to_pubsub(settings.PUBSUB_TOPIC_DATA_COLLECT, raw_data)
 
     gpt_request_data = {
         "user_id": submission.user_id,

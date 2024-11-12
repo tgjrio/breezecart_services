@@ -10,7 +10,6 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 # Initialize RedisManager to handle storing and retrieving data from Redis
 redis_manager = ds.RedisManager()
-pubsub_manager = ds.PubSubManager()
 
 # Initialize FastAPI application
 app = FastAPI()
@@ -69,12 +68,9 @@ async def process_gpt(gpt_request: schemas.ChatGptRequest):
     # Send to Redis
     await redis_manager.save_to_redis(session_id, 'clean_processed_data', clean_data, prefix="temp")
 
-    # Send to Pub/Sub Topic Clean_data
-    await pubsub_manager.publish_to_pubsub(settings.PUBSUB_TOPIC_DATA_COLLECT, clean_data)    
-
 # This block is executed when running the script directly, starting the FastAPI app using Uvicorn
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8080)
-    
+
 
