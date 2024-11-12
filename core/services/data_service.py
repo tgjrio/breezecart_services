@@ -18,11 +18,12 @@ class RedisManager:
         Initialize the RedisManager with the necessary Redis configuration.
         Establish a connection to the Redis server using host, port, and password.
         """
-        self.redis_client = redis.from_url(
-            f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}",
-            password=settings.REDIS_PASSWORD,
-            decode_responses=True
-        )
+        self.redis_client = redis.Redis(settings.REDIS_HOST, settings.REDIS_PORT, settings.REDIS_PASSWORD)
+        # self.redis_client = redis.from_url(
+        #     f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}",
+        #     password=settings.REDIS_PASSWORD,
+        #     decode_responses=True
+        # )
 
     async def save_to_redis(self, session_id: str, key: str, data: dict, prefix: str = "prefix"):
         """
