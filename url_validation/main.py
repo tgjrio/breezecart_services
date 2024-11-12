@@ -43,7 +43,7 @@ async def start_processing(submission: schemas.SubmissionRequest):
         logging.info(f"Submission stored in Redis for session: {submission.session_id}")
 
         # Send data to the facilitate-request endpoint using send_to_service
-        await ds.send_to_service(settings.FACILITATE_EVENTS, message_data, submission.session_id, "Facilitate Request")
+        await ds.send_to_service(settings.FACILITATE_REQUEST, message_data, submission.session_id, "Facilitate Request")
 
         # Return a success message along with the stored session data retrieved from Redis
         return {

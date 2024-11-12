@@ -91,6 +91,6 @@ async def background_process_html(submission: schemas.SubmissionRequest):
     }
 
     # Publish an event to Pub/Sub to indicate the completion of the HTML processing phase
-    await ds.send_to_service(settings.FACILITATE_EVENTS, gpt_request_data, submission.session_id, "Facilitate Request")
+    await ds.send_to_service(settings.FACILITATE_REQUEST, gpt_request_data, submission.session_id, "Facilitate Request")
 
     logging.info(f"HTML processing complete for session: {submission.session_id}")

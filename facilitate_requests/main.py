@@ -34,11 +34,11 @@ async def process_url_events(message_json: dict):
     try:
         if phase == "validation_complete":
             # Call HTML processing service
-            await ds.send_to_service(settings.PROCESS_HTML_URL, message_json, session_id, "HTML Processing")
+            await ds.send_to_service(settings.PROCESS_HTML_REQUEST, message_json, session_id, "HTML Processing")
 
         elif phase == "chat_gpt_ingest":
             # Call URL parsing service
-            await ds.send_to_service(settings.CHAT_GPT_INGEST, message_json, session_id,"Chat GPT Processing")
+            await ds.send_to_service(settings.CHAT_GPT_REQUEST, message_json, session_id,"Chat GPT Processing")
 
         else:
             # Invalid phase handling
