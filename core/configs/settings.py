@@ -5,7 +5,7 @@ import os
 
 # load_dotenv()
 
-def access_secret_version(project_id, secret_id, version_id="latest"):
+def access_secret_version(project_id, secret_id, version_id=1):
     """
     Access the payload for the given secret version if one exists. The version
     can be a version number as a string (e.g. "5") or an alias (e.g. "latest").
