@@ -3,7 +3,6 @@ from fastapi import FastAPI, HTTPException
 from core.configs import schemas, settings
 from core.services import data_service as ds
 
-
 # Set up logging to track important events and errors throughout the app
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
