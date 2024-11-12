@@ -31,7 +31,8 @@ async def process_html(submission: schemas.SubmissionRequest, background_tasks: 
     }
     
     # Save the session data to Redis with the key "submission" under the session ID
-    await redis_manager.save_to_redis(session_id, "submission", session_data, prefix="temp")
+    await redis_manager.save_to_redis(submission.session_id, "submission", session_data, prefix="temp")
+    
 
     # # Retrieve the data back from Redis to ensure it was saved correctly
     # saved_data = await redis_manager.get_from_redis(session_id, "submission", prefix="temp")
