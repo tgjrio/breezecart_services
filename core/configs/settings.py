@@ -1,10 +1,10 @@
 from openai import OpenAI
 from google.cloud import secretmanager
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-# Load .env file variables into the environment
-load_dotenv()
+# # Load .env file variables into the environment
+# load_dotenv()
 
 # Set your project ID (ideally as an environment variable)
 PROJECT_ID = 'personal-portfolio-hty0zj'

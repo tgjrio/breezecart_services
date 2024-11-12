@@ -84,15 +84,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Load .env variables
-        run: |
-          set -o allexport
-          source .env
-          set +o allexport
-      
-      - name: Print loaded environment variables (for debugging)
-        run: echo "PROJECT_ID is $PROJECT_ID"
-
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
@@ -126,15 +117,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Load .env variables
-        run: |
-          set -o allexport
-          source .env
-          set +o allexport
-      
-      - name: Print loaded environment variables (for debugging)
-        run: echo "PROJECT_ID is $PROJECT_ID"
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
@@ -170,15 +152,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Load .env variables
-        run: |
-          set -o allexport
-          source .env
-          set +o allexport
-      
-      - name: Print loaded environment variables (for debugging)
-        run: echo "PROJECT_ID is $PROJECT_ID"
-
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
@@ -212,15 +185,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Load .env variables
-        run: |
-          set -o allexport
-          source .env
-          set +o allexport
-      
-      - name: Print loaded environment variables (for debugging)
-        run: echo "PROJECT_ID is $PROJECT_ID"
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
